@@ -62,6 +62,26 @@ export default function SignUpPage() {
     }
   }
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true)
+    setError('')
+    setSuccess('')
+
+    const { createClient } = await import('@/lib/supabase/client')
+    const supabase = createClient()
+    const { error: googleError } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+
+    if (googleError) {
+      setError(googleError.message)
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4">
       <div className="max-w-md w-full mx-auto">
@@ -121,6 +141,17 @@ export default function SignUpPage() {
               {loading ? 'Creating account...' : 'Create free account'}
             </button>
           </form>
+
+          <div className="my-5 flex items-center gap-3">
+            <div className="h-px flex-1 bg-gray-200" />
+            <span className="text-xs text-gray-400">or</span>
+            <div className="h-px flex-1 bg-gray-200" />
+          </div>
+
+          <button type="button" disabled={loading} onClick={handleGoogleSignIn}
+            className="btn-secondary w-full justify-center py-3">
+            Continue with Google
+          </button>
 
           <p className="mt-6 text-center text-sm text-gray-500">
             Already have an account?{' '}
