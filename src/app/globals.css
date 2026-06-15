@@ -78,6 +78,36 @@
     font-weight: 600;
     color: #1f2937;
   }
+
+  .scroll-reveal {
+    opacity: 0;
+    transition:
+      opacity 0.75s ease,
+      transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  .scroll-reveal.reveal-up {
+    transform: translateY(54px) scale(0.97);
+  }
+
+  .scroll-reveal.reveal-down {
+    transform: translateY(-46px) scale(0.97);
+  }
+
+  .scroll-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    opacity: 1;
+    transform: none !important;
+    transition: none !important;
+  }
 }
 
 @media print {

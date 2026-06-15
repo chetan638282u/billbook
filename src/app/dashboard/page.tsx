@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { FileText, Users, TrendingUp, Clock, Plus, ArrowRight, AlertCircle } from 'lucide-react'
 import { formatCurrency, formatDate, getStatusColor, getStatusLabel } from '@/lib/utils'
 import { PLAN_LIMITS } from '@/types'
+import ScrollReveal from '@/components/ui/ScrollReveal'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -46,28 +47,31 @@ export default async function DashboardPage() {
     <AppShell>
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="page-title">
-              {business?.name ? `Welcome back` : 'Dashboard'}
-            </h1>
-            {business?.name && (
-              <p className="text-gray-500 mt-1">{business.name}</p>
+        <ScrollReveal direction="down">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="page-title">
+                {business?.name ? `Welcome back` : 'Dashboard'}
+              </h1>
+              {business?.name && (
+                <p className="text-gray-500 mt-1">{business.name}</p>
+              )}
+            </div>
+            {atLimit ? (
+              <Link href="/billing" className="btn-primary text-sm">
+                <AlertCircle className="w-4 h-4" /> Upgrade to create more
+              </Link>
+            ) : (
+              <Link href="/invoices/new" className="btn-primary text-sm">
+                <Plus className="w-4 h-4" /> New Invoice
+              </Link>
             )}
           </div>
-          {atLimit ? (
-            <Link href="/billing" className="btn-primary text-sm">
-              <AlertCircle className="w-4 h-4" /> Upgrade to create more
-            </Link>
-          ) : (
-            <Link href="/invoices/new" className="btn-primary text-sm">
-              <Plus className="w-4 h-4" /> New Invoice
-            </Link>
-          )}
-        </div>
+        </ScrollReveal>
 
         {/* Plan limit warning */}
         {plan === 'free' && (monthlyCount || 0) >= 3 && (
+          <ScrollReveal delay={80}>
           <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 mb-6 flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <div>
@@ -79,14 +83,17 @@ export default async function DashboardPage() {
               </Link>
             </div>
           </div>
+          </ScrollReveal>
         )}
 
         {/* Business setup nudge */}
         {!business?.name && (
+          <ScrollReveal delay={100}>
           <div className="bg-blue-50 border border-blue-200 rounded-xl px-5 py-4 mb-6 flex items-center justify-between gap-4">
             <p className="text-sm text-blue-800 font-medium">Set up your business profile to appear on invoices</p>
             <Link href="/settings" className="btn-primary text-sm py-2">Set up now</Link>
           </div>
+          </ScrollReveal>
         )}
 
         {/* Stats */}
@@ -96,18 +103,21 @@ export default async function DashboardPage() {
             { label: 'Clients', value: clients?.length || 0, icon: Users, color: 'text-purple-600 bg-purple-50' },
             { label: 'Revenue (paid)', value: formatCurrency(totalRevenue), icon: TrendingUp, color: 'text-green-600 bg-green-50', wide: true },
             { label: 'Awaiting payment', value: unpaidCount, icon: Clock, color: 'text-orange-600 bg-orange-50' },
-          ].map((stat) => (
-            <div key={stat.label} className={`card p-5 ${stat.wide ? 'col-span-2 md:col-span-1' : ''}`}>
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${stat.color}`}>
-                <stat.icon className="w-4 h-4" />
+          ].map((stat, index) => (
+            <ScrollReveal key={stat.label} delay={index * 75} className={stat.wide ? 'col-span-2 md:col-span-1' : ''}>
+              <div className="card p-5 h-full">
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${stat.color}`}>
+                  <stat.icon className="w-4 h-4" />
+                </div>
+                <div className="text-xl font-bold text-gray-900">{stat.value}</div>
+                <div className="text-xs text-gray-500 mt-1">{stat.label}</div>
               </div>
-              <div className="text-xl font-bold text-gray-900">{stat.value}</div>
-              <div className="text-xs text-gray-500 mt-1">{stat.label}</div>
-            </div>
+            </ScrollReveal>
           ))}
         </div>
 
         {/* Recent invoices */}
+        <ScrollReveal delay={160}>
         <div className="card">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <h2 className="section-title">Recent invoices</h2>
@@ -147,6 +157,7 @@ export default async function DashboardPage() {
             </div>
           )}
         </div>
+        </ScrollReveal>
       </div>
     </AppShell>
   )
