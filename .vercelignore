@@ -1,0 +1,5 @@
+# Files not needed by Vercel to build or run the app.
+*.zip
+*.md
+supabase-schema.sql
+.env.local.example
