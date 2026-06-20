@@ -1,8 +1,20 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { FileText, CheckCircle, Download, Shield, Users, TrendingUp, ArrowRight, Star } from 'lucide-react'
 import ScrollReveal from '@/components/ui/ScrollReveal'
 
-export default function LandingPage() {
+export default async function LandingPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ code?: string; next?: string }>
+}) {
+  const params = await searchParams
+  if (params?.code) {
+    const callbackParams = new URLSearchParams({ code: params.code })
+    if (params.next?.startsWith('/')) callbackParams.set('next', params.next)
+    redirect(`/auth/callback?${callbackParams.toString()}`)
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Nav */}

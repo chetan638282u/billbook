@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FileText, Eye, EyeOff, Loader2 } from 'lucide-react'
@@ -8,19 +8,17 @@ import { FileText, Eye, EyeOff, Loader2 } from 'lucide-react'
 export default function SignInPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const initialError = searchParams.get('error') === 'confirmation_failed'
+    ? 'Email confirmation failed. Please try again or contact support.'
+    : ''
+  const initialInfo = searchParams.get('message') === 'check_email'
+    ? 'Check your email and click the confirmation link to activate your account.'
+    : ''
   const [form, setForm] = useState({ email: '', password: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [info, setInfo] = useState('')
-
-  useEffect(() => {
-    // Show message if redirected from email confirmation failure
-    const err = searchParams.get('error')
-    const msg = searchParams.get('message')
-    if (err === 'confirmation_failed') setError('Email confirmation failed. Please try again or contact support.')
-    if (msg === 'check_email') setInfo('Check your email and click the confirmation link to activate your account.')
-  }, [searchParams])
+  const [error, setError] = useState(initialError)
+  const [info] = useState(initialInfo)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -19,12 +19,7 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      // After email confirmation, init account then redirect to dashboard
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        // Ensure subscription row exists
-        await fetch(`${origin}/api/init-account`, { method: 'POST' })
-      }
+      // The database trigger creates the free subscription row automatically.
       return NextResponse.redirect(`${origin}${safeNext}`)
     }
   }
