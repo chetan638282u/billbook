@@ -71,17 +71,27 @@ export default function SignUpPage() {
 
     const { createClient } = await import('@/lib/supabase/client')
     const supabase = createClient()
-    const { error: googleError } = await supabase.auth.signInWithOAuth({
+    const { data, error: googleError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${PRODUCTION_APP_URL}/auth/callback`,
+        skipBrowserRedirect: true,
       },
     })
 
     if (googleError) {
       setError(googleError.message)
       setLoading(false)
+      return
     }
+
+    if (data.url) {
+      window.location.assign(data.url)
+      return
+    }
+
+    setError('Google sign in could not start. Please try again.')
+    setLoading(false)
   }
 
   return (
