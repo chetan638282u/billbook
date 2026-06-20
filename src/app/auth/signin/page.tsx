@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FileText, Eye, EyeOff, Loader2 } from 'lucide-react'
 
+const PRODUCTION_APP_URL = 'https://billbook-ten.vercel.app'
+
 export default function SignInPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -51,7 +53,7 @@ export default function SignInPage() {
     const { error: googleError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${PRODUCTION_APP_URL}/auth/callback`,
       },
     })
 
