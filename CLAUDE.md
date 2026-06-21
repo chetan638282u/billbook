@@ -78,8 +78,9 @@ https://olmffrrbmhtawbgxwnhf.supabase.co/auth/v1/callback
 
 Testing result:
 
-- The previous error `Unsupported provider: provider is not enabled` is fixed.
-- Clicking `Continue with Google` now redirects to the Google account sign-in screen.
+- Google login uses the official Google Identity button.
+- Supabase signs in with the Google ID token through `signInWithIdToken`.
+- The old `/auth/google` redirect route is locked and redirects to `/auth/signin` so it cannot start the older Supabase OAuth redirect flow.
 
 If Google sign-in later shows a Google testing/consent warning, check the Google OAuth consent screen and test users before changing app code.
 
@@ -90,14 +91,12 @@ Google login was added to:
 - `src/app/auth/signup/page.tsx`
 - `src/app/auth/signin/page.tsx`
 
-The Supabase OAuth flow uses:
+The current Google button flow uses:
 
 ```ts
-supabase.auth.signInWithOAuth({
+supabase.auth.signInWithIdToken({
   provider: "google",
-  options: {
-    redirectTo: `${window.location.origin}/auth/callback`,
-  },
+  token,
 })
 ```
 
