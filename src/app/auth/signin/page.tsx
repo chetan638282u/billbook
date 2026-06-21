@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FileText, Eye, EyeOff, Loader2 } from 'lucide-react'
@@ -20,52 +20,76 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(initialError)
   const [info] = useState(initialInfo)
+  const [loadingNotice, setLoadingNotice] = useState('')
+
+  useEffect(() => {
+    if (!loading) {
+      setLoadingNotice('')
+      return
+    }
+
+    const timer = window.setTimeout(() => {
+      setLoadingNotice('Still signing you in. If this takes too long, refresh the page and try again.')
+    }, 12000)
+
+    return () => window.clearTimeout(timer)
+  }, [loading])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: form.email.trim().toLowerCase(),
-      password: form.password,
-    })
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: form.email.trim().toLowerCase(),
+        password: form.password,
+      })
 
-    if (signInError) {
-      setError('Invalid email or password. Please try again.')
+      if (signInError) {
+        setError('Invalid email or password. Please try again.')
+        setLoading(false)
+        return
+      }
+
+      router.push('/dashboard')
+      router.refresh()
+    } catch {
+      setError('Sign in could not be completed. Please check your connection and try again.')
       setLoading(false)
-      return
     }
-
-    router.push('/dashboard')
-    router.refresh()
   }
 
   const handleGoogleCredential = async (token: string) => {
     setLoading(true)
     setError('')
-    const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
-
-    const { error: googleError } = await supabase.auth.signInWithIdToken({
-      provider: 'google',
-      token,
-    })
-
-    if (googleError) {
-      setError(googleError.message)
-      setLoading(false)
-      return
-    }
-
     try {
-      await fetch('/api/init-account', { method: 'POST' })
-    } catch {}
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
 
-    router.push('/dashboard')
-    router.refresh()
+      const { error: googleError } = await supabase.auth.signInWithIdToken({
+        provider: 'google',
+        token,
+      })
+
+      if (googleError) {
+        setError(googleError.message || 'Google sign in failed. Please try again.')
+        setLoading(false)
+        return
+      }
+
+      try {
+        await fetch('/api/init-account', { method: 'POST' })
+      } catch {}
+
+      router.push('/dashboard')
+      router.refresh()
+    } catch {
+      setError('Google sign in could not be completed. Please try again.')
+      setLoading(false)
+    }
   }
 
   return (
@@ -109,6 +133,9 @@ export default function SignInPage() {
 
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">{error}</div>
+            )}
+            {loadingNotice && !error && (
+              <div className="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-lg px-4 py-3">{loadingNotice}</div>
             )}
 
             <button type="submit" disabled={loading} className="btn-primary w-full justify-center py-3">

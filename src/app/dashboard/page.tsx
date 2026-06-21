@@ -22,11 +22,16 @@ type DashboardClient = {
   id: string
 }
 
+type SafeQueryResult<T> = {
+  data: T
+  failed: boolean
+}
+
 async function safeDashboardQuery<T>(
   query: PromiseLike<{ data: T | null; error: unknown }>,
   fallback: T,
   label: string
-): Promise<T> {
+): Promise<SafeQueryResult<T>> {
   const timeout = new Promise<{ data: T; error: Error }>((resolve) => {
     setTimeout(() => resolve({ data: fallback, error: new Error(`${label} timed out`) }), 4000)
   })
@@ -34,10 +39,10 @@ async function safeDashboardQuery<T>(
   try {
     const result = await Promise.race([query, timeout])
     if (result.error) console.error(`Dashboard query failed: ${label}`, result.error)
-    return result.data ?? fallback
+    return { data: result.data ?? fallback, failed: Boolean(result.error) }
   } catch (err) {
     console.error(`Dashboard query failed: ${label}`, err)
-    return fallback
+    return { data: fallback, failed: true }
   }
 }
 
@@ -46,7 +51,7 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/signin')
 
-  const [invoices, clients, subscription, business] = await Promise.all([
+  const [invoicesResult, clientsResult, subscriptionResult, businessResult] = await Promise.all([
     safeDashboardQuery<DashboardInvoice[]>(
       supabase.from('invoices').select('*, clients(name)').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5),
       [],
@@ -69,13 +74,20 @@ export default async function DashboardPage() {
     ),
   ])
 
+  const invoices = invoicesResult.data
+  const clients = clientsResult.data
+  const subscription = subscriptionResult.data
+  const business = businessResult.data
+  const hasDashboardWarning =
+    invoicesResult.failed || clientsResult.failed || subscriptionResult.failed || businessResult.failed
+
   const plan = subscription?.plan || 'free'
   const limit = PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS]
 
   // Count this month's invoices
   const thisMonth = new Date()
   thisMonth.setDate(1)
-  const monthlyCount = await safeDashboardQuery<number>(
+  const monthlyCountResult = await safeDashboardQuery<number>(
     supabase
       .from('invoices')
       .select('*', { count: 'exact', head: true })
@@ -85,6 +97,8 @@ export default async function DashboardPage() {
     0,
     'monthly invoice count'
   )
+  const monthlyCount = monthlyCountResult.data
+  const showDashboardWarning = hasDashboardWarning || monthlyCountResult.failed
 
   const totalRevenue = invoices?.reduce((sum, inv) => sum + (inv.status === 'paid' ? inv.total : 0), 0) || 0
   const unpaidCount = invoices?.filter(inv => inv.status === 'sent' || inv.status === 'overdue').length || 0
@@ -116,6 +130,18 @@ export default async function DashboardPage() {
             )}
           </div>
         </ScrollReveal>
+
+        {showDashboardWarning && (
+          <ScrollReveal delay={60}>
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 mb-6 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-amber-800">Some dashboard data could not load.</p>
+              <p className="text-sm text-amber-700 mt-0.5">Refresh the page. If it continues, sign out and sign in again.</p>
+            </div>
+          </div>
+          </ScrollReveal>
+        )}
 
         {/* Plan limit warning */}
         {plan === 'free' && (monthlyCount || 0) >= 3 && (

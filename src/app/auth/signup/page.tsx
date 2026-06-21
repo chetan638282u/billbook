@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FileText, Eye, EyeOff, Loader2 } from 'lucide-react'
@@ -13,6 +13,20 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [loadingNotice, setLoadingNotice] = useState('')
+
+  useEffect(() => {
+    if (!loading) {
+      setLoadingNotice('')
+      return
+    }
+
+    const timer = window.setTimeout(() => {
+      setLoadingNotice('Still creating your account. If this takes too long, refresh the page and try again.')
+    }, 12000)
+
+    return () => window.clearTimeout(timer)
+  }, [loading])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,42 +38,41 @@ export default function SignUpPage() {
     if (!name) { setError('Please enter your name.'); setLoading(false); return }
     if (form.password.length < 8) { setError('Password must be at least 8 characters.'); setLoading(false); return }
 
-    const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email: form.email.trim().toLowerCase(),
-      password: form.password,
-      options: {
-        data: { full_name: name },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    })
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: form.email.trim().toLowerCase(),
+        password: form.password,
+        options: {
+          data: { full_name: name },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
 
-    if (signUpError) {
-      // Show the real Supabase error so issues are visible
-      setError(signUpError.message)
-      setLoading(false)
-      return
-    }
-
-    if (data.user && !data.session) {
-      // Email confirmation required
-      setSuccess('Account created! Check your email for a confirmation link, then sign in.')
-      setLoading(false)
-      return
-    }
-
-    if (data.user && data.session) {
-      // No email confirmation needed — go straight to dashboard
-      // Init subscription via server API
-      try {
-        await fetch('/api/init-account', { method: 'POST' })
-      } catch {
-        // Non-fatal — DB trigger handles this as backup
+      if (signUpError) {
+        setError(signUpError.message)
+        setLoading(false)
+        return
       }
-      router.push('/dashboard')
-      router.refresh()
+
+      if (data.user && !data.session) {
+        setSuccess('Account created! Check your email for a confirmation link, then sign in.')
+        setLoading(false)
+        return
+      }
+
+      if (data.user && data.session) {
+        try {
+          await fetch('/api/init-account', { method: 'POST' })
+        } catch {}
+        router.push('/dashboard')
+        router.refresh()
+      }
+    } catch {
+      setError('Account creation could not be completed. Please check your connection and try again.')
+      setLoading(false)
     }
   }
 
@@ -67,26 +80,32 @@ export default function SignUpPage() {
     setLoading(true)
     setError('')
     setSuccess('')
-    const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
-
-    const { error: googleError } = await supabase.auth.signInWithIdToken({
-      provider: 'google',
-      token,
-    })
-
-    if (googleError) {
-      setError(googleError.message)
-      setLoading(false)
-      return
-    }
 
     try {
-      await fetch('/api/init-account', { method: 'POST' })
-    } catch {}
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
 
-    router.push('/dashboard')
-    router.refresh()
+      const { error: googleError } = await supabase.auth.signInWithIdToken({
+        provider: 'google',
+        token,
+      })
+
+      if (googleError) {
+        setError(googleError.message || 'Google sign up failed. Please try again.')
+        setLoading(false)
+        return
+      }
+
+      try {
+        await fetch('/api/init-account', { method: 'POST' })
+      } catch {}
+
+      router.push('/dashboard')
+      router.refresh()
+    } catch {
+      setError('Google sign up could not be completed. Please try again.')
+      setLoading(false)
+    }
   }
 
   return (
@@ -141,6 +160,9 @@ export default function SignUpPage() {
               <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
                 <strong>Error:</strong> {error}
               </div>
+            )}
+            {loadingNotice && !error && (
+              <div className="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-lg px-4 py-3">{loadingNotice}</div>
             )}
 
             <button type="submit" disabled={loading} className="btn-primary w-full justify-center py-3">
