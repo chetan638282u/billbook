@@ -29,6 +29,7 @@ export default async function LandingPage({
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
             <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
             <Link href="#features" className="hover:text-blue-600 transition-colors">Features</Link>
+            <Link href="/knowledge" className="hover:text-blue-600 transition-colors">Knowledge</Link>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/auth/signin" className="text-sm font-medium text-gray-600 hover:text-gray-900">Sign in</Link>
