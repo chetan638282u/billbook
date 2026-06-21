@@ -1,14 +1,26 @@
 export const dynamic = 'force-dynamic'
 import PrintButton from '@/components/ui/PrintButton'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import { FileText } from 'lucide-react'
 import { formatCurrency, formatDate, getStatusColor, getStatusLabel } from '@/lib/utils'
 
 export default async function PublicInvoicePage({ params }: { params: Promise<{ publicId: string }> }) {
   const { publicId: rawPublicId } = await params
-  const supabase = await createClient()
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!serviceRoleKey) return notFound()
+
+  const supabase = createServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    serviceRoleKey,
+    {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    }
+  )
 
   // ✅ SECURITY: Sanitize publicId — only allow alphanumeric chars
   const publicId = rawPublicId.replace(/[^a-zA-Z0-9]/g, '')

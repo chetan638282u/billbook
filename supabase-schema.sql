@@ -124,8 +124,8 @@ CREATE POLICY "invoices_owner_insert" ON invoices FOR INSERT WITH CHECK (auth.ui
 CREATE POLICY "invoices_owner_update" ON invoices FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "invoices_owner_delete" ON invoices FOR DELETE USING (auth.uid() = user_id);
 
--- invoices (public shared link - no auth needed)
-CREATE POLICY "invoices_public_read" ON invoices FOR SELECT USING (auth.uid() IS NULL);
+-- Public shared links are served by the Next.js server with the service role key.
+-- Do not add anonymous invoice SELECT policies here; they can expose invoice data.
 
 -- invoice_items (owner via invoice)
 CREATE POLICY "items_select" ON invoice_items FOR SELECT
@@ -137,8 +137,8 @@ CREATE POLICY "items_update" ON invoice_items FOR UPDATE
 CREATE POLICY "items_delete" ON invoice_items FOR DELETE
   USING (invoice_id IN (SELECT id FROM invoices WHERE user_id = auth.uid()));
 
--- invoice_items (public read for shared links)
-CREATE POLICY "items_public_read" ON invoice_items FOR SELECT USING (auth.uid() IS NULL);
+-- Public invoice items are served by the Next.js server with the service role key.
+-- Do not add anonymous invoice_items SELECT policies here.
 
 -- subscriptions (users read their own only, writes via service role)
 CREATE POLICY "subscriptions_select" ON subscriptions FOR SELECT USING (auth.uid() = user_id);
