@@ -14,6 +14,17 @@ type GoogleAccounts = {
       cancel_on_tap_outside?: boolean
       ux_mode?: 'popup' | 'redirect'
     }) => void
+    renderButton: (
+      parent: HTMLElement,
+      options: {
+        theme?: 'outline' | 'filled_blue' | 'filled_black'
+        size?: 'large' | 'medium' | 'small'
+        type?: 'standard' | 'icon'
+        text?: 'signin_with' | 'signup_with' | 'continue_with' | 'signin'
+        shape?: 'rectangular' | 'pill' | 'circle' | 'square'
+        width?: number
+      }
+    ) => void
     prompt: (callback?: (notification: { isNotDisplayed: () => boolean; isSkippedMoment: () => boolean }) => void) => void
   }
 }
@@ -28,7 +39,11 @@ declare global {
 
 let loadingScript: Promise<void> | null = null
 
-function loadGoogleIdentityScript() {
+export function getGoogleClientId() {
+  return GOOGLE_CLIENT_ID
+}
+
+export function loadGoogleIdentityScript() {
   if (window.google?.accounts?.id) return Promise.resolve()
   if (loadingScript) return loadingScript
 

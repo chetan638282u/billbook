@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FileText, Eye, EyeOff, Loader2 } from 'lucide-react'
+import GoogleSignInButton from '@/components/auth/GoogleSignInButton'
 
 export default function SignInPage() {
   const router = useRouter()
@@ -42,36 +43,29 @@ export default function SignInPage() {
     router.refresh()
   }
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleCredential = async (token: string) => {
     setLoading(true)
     setError('')
     const { createClient } = await import('@/lib/supabase/client')
-    const { getGoogleIdToken } = await import('@/lib/googleIdentity')
     const supabase = createClient()
 
-    try {
-      const token = await getGoogleIdToken()
-      const { error: googleError } = await supabase.auth.signInWithIdToken({
-        provider: 'google',
-        token,
-      })
+    const { error: googleError } = await supabase.auth.signInWithIdToken({
+      provider: 'google',
+      token,
+    })
 
-      if (googleError) {
-        setError(googleError.message)
-        setLoading(false)
-        return
-      }
-
-      try {
-        await fetch('/api/init-account', { method: 'POST' })
-      } catch {}
-
-      router.push('/dashboard')
-      router.refresh()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Google sign in failed. Please try again.')
+    if (googleError) {
+      setError(googleError.message)
       setLoading(false)
+      return
     }
+
+    try {
+      await fetch('/api/init-account', { method: 'POST' })
+    } catch {}
+
+    router.push('/dashboard')
+    router.refresh()
   }
 
   return (
@@ -129,10 +123,14 @@ export default function SignInPage() {
             <div className="h-px flex-1 bg-gray-200" />
           </div>
 
-          <button type="button" disabled={loading} onClick={handleGoogleSignIn}
-            className="btn-secondary w-full justify-center py-3">
-            Continue with Google
-          </button>
+          <GoogleSignInButton
+            disabled={loading}
+            onCredential={handleGoogleCredential}
+            onError={(message) => {
+              setError(message)
+              setLoading(false)
+            }}
+          />
 
           <p className="mt-6 text-center text-sm text-gray-500">
             Don&apos;t have an account?{' '}
