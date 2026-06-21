@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { rateLimit, getClientIP } from '@/lib/ratelimit'
+import { requireServerEnv } from '@/lib/env'
 
 const PLAN_PRICES = Object.assign(Object.create(null) as Record<string, number>, {
   starter: 14900,
@@ -56,7 +57,10 @@ export async function POST(req: NextRequest) {
 
     // Dynamically import Razorpay only when keys are available
     const Razorpay = (await import('razorpay')).default
-    const razorpay = new Razorpay({ key_id: razorpayKeyId, key_secret: razorpaySecret })
+    const razorpay = new Razorpay({
+      key_id: razorpayKeyId,
+      key_secret: requireServerEnv('RAZORPAY_KEY_SECRET'),
+    })
 
     const order = await razorpay.orders.create({
       amount,

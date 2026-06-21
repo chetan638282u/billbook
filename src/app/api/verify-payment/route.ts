@@ -3,6 +3,7 @@ import crypto from 'crypto'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { rateLimit, getClientIP } from '@/lib/ratelimit'
+import { requireServerEnv } from '@/lib/env'
 
 const VALID_PLANS = new Set(['starter', 'pro'])
 
@@ -53,8 +54,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Invalid payment data' }, { status: 400 })
     }
 
+    const razorpaySecret = requireServerEnv('RAZORPAY_KEY_SECRET')
+    const supabaseUrl = requireServerEnv('NEXT_PUBLIC_SUPABASE_URL')
+    const serviceRoleKey = requireServerEnv('SUPABASE_SERVICE_ROLE_KEY')
+
     const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
+      .createHmac('sha256', razorpaySecret)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex')
 
@@ -64,8 +69,8 @@ export async function POST(req: NextRequest) {
     }
 
     const serviceClient = createServiceClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      supabaseUrl,
+      serviceRoleKey
     )
 
     const validUntil = new Date()
@@ -90,6 +95,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error('Verify payment error:', err)
-    return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 })
+    return NextResponse.json({ success: false, error: 'Payment verification is temporarily unavailable.' }, { status: 500 })
   }
 }

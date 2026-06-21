@@ -28,6 +28,9 @@ These variables are configured in Vercel. Do not remove or rename them.
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `NEXT_PUBLIC_APP_URL`
+- `NEXT_PUBLIC_GOOGLE_CLIENT_ID`
+- `NEXT_PUBLIC_RAZORPAY_KEY_ID`
+- `RAZORPAY_KEY_SECRET`
 
 The Supabase URL uses the project base URL:
 
@@ -36,6 +39,12 @@ https://olmffrrbmhtawbgxwnhf.supabase.co
 ```
 
 Do not include `/rest/v1/` in `NEXT_PUBLIC_SUPABASE_URL`.
+
+The production app URL is:
+
+```text
+https://billbook-ten.vercel.app
+```
 
 ## Supabase Project
 

@@ -1,5 +1,7 @@
 import type { NextConfig } from 'next'
 
+const productionAppUrl = 'https://billbook-ten.vercel.app'
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -44,7 +46,7 @@ const nextConfig: NextConfig = {
           { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate' },
           { key: 'Pragma', value: 'no-cache' },
           // ✅ CORS: Only allow requests from our own domain
-          { key: 'Access-Control-Allow-Origin', value: process.env.NEXT_PUBLIC_APP_URL || 'https://billbook.in' },
+          { key: 'Access-Control-Allow-Origin', value: process.env.NEXT_PUBLIC_APP_URL || productionAppUrl },
           { key: 'Access-Control-Allow-Methods', value: 'POST, OPTIONS' },
           { key: 'Access-Control-Allow-Headers', value: 'Content-Type' },
         ],

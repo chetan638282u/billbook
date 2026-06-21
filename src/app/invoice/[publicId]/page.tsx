@@ -5,14 +5,14 @@ import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { notFound } from 'next/navigation'
 import { FileText } from 'lucide-react'
 import { formatCurrency, formatDate, getStatusColor, getStatusLabel } from '@/lib/utils'
+import { requireServerEnv } from '@/lib/env'
 
 export default async function PublicInvoicePage({ params }: { params: Promise<{ publicId: string }> }) {
   const { publicId: rawPublicId } = await params
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!serviceRoleKey) return notFound()
+  const serviceRoleKey = requireServerEnv('SUPABASE_SERVICE_ROLE_KEY')
 
   const supabase = createServiceClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    requireServerEnv('NEXT_PUBLIC_SUPABASE_URL'),
     serviceRoleKey,
     {
       auth: {

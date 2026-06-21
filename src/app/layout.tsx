@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import { getAppUrl } from '@/lib/env'
 
 export const metadata: Metadata = {
   title: {
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
   keywords: ['GST invoice generator India', 'free billing software India', 'online invoice maker', 'GST billing tool', 'freelancer invoice India'],
   authors: [{ name: 'BillBook.in' }],
   creator: 'BillBook.in',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://billbook.in'),
+  metadataBase: new URL(getAppUrl()),
   openGraph: {
     type: 'website',
     locale: 'en_IN',
