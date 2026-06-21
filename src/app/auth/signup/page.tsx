@@ -66,7 +66,33 @@ export default function SignUpPage() {
     setLoading(true)
     setError('')
     setSuccess('')
-    window.location.href = '/auth/google'
+    const { createClient } = await import('@/lib/supabase/client')
+    const { getGoogleIdToken } = await import('@/lib/googleIdentity')
+    const supabase = createClient()
+
+    try {
+      const token = await getGoogleIdToken()
+      const { error: googleError } = await supabase.auth.signInWithIdToken({
+        provider: 'google',
+        token,
+      })
+
+      if (googleError) {
+        setError(googleError.message)
+        setLoading(false)
+        return
+      }
+
+      try {
+        await fetch('/api/init-account', { method: 'POST' })
+      } catch {}
+
+      router.push('/dashboard')
+      router.refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Google sign in failed. Please try again.')
+      setLoading(false)
+    }
   }
 
   return (
