@@ -5,8 +5,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FileText, Eye, EyeOff, Loader2 } from 'lucide-react'
 
-const PRODUCTION_APP_URL = 'https://billbook-ten.vercel.app'
-
 export default function SignUpPage() {
   const router = useRouter()
   const [form, setForm] = useState({ name: '', email: '', password: '' })
@@ -68,20 +66,7 @@ export default function SignUpPage() {
     setLoading(true)
     setError('')
     setSuccess('')
-
-    const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
-    const { error: googleError } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${PRODUCTION_APP_URL}/auth/callback`,
-      },
-    })
-
-    if (googleError) {
-      setError(googleError.message)
-      setLoading(false)
-    }
+    window.location.href = '/auth/google'
   }
 
   return (
