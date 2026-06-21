@@ -9,21 +9,64 @@ import { formatCurrency, formatDate, getStatusColor, getStatusLabel } from '@/li
 import { PLAN_LIMITS } from '@/types'
 import ScrollReveal from '@/components/ui/ScrollReveal'
 
+type DashboardInvoice = {
+  id: string
+  invoice_number: string
+  invoice_date: string
+  status: string
+  total: number
+  clients: { name: string } | null
+}
+
+type DashboardClient = {
+  id: string
+}
+
+async function safeDashboardQuery<T>(
+  query: PromiseLike<{ data: T | null; error: unknown }>,
+  fallback: T,
+  label: string
+): Promise<T> {
+  const timeout = new Promise<{ data: T; error: Error }>((resolve) => {
+    setTimeout(() => resolve({ data: fallback, error: new Error(`${label} timed out`) }), 4000)
+  })
+
+  try {
+    const result = await Promise.race([query, timeout])
+    if (result.error) console.error(`Dashboard query failed: ${label}`, result.error)
+    return result.data ?? fallback
+  } catch (err) {
+    console.error(`Dashboard query failed: ${label}`, err)
+    return fallback
+  }
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/signin')
 
-  const [
-    { data: invoices },
-    { data: clients },
-    { data: subscription },
-    { data: business },
-  ] = await Promise.all([
-    supabase.from('invoices').select('*, clients(name)').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5),
-    supabase.from('clients').select('id').eq('user_id', user.id),
-    supabase.from('subscriptions').select('*').eq('user_id', user.id).single(),
-    supabase.from('businesses').select('name').eq('user_id', user.id).single(),
+  const [invoices, clients, subscription, business] = await Promise.all([
+    safeDashboardQuery<DashboardInvoice[]>(
+      supabase.from('invoices').select('*, clients(name)').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5),
+      [],
+      'recent invoices'
+    ),
+    safeDashboardQuery<DashboardClient[]>(
+      supabase.from('clients').select('id').eq('user_id', user.id),
+      [],
+      'clients'
+    ),
+    safeDashboardQuery<{ plan: string } | null>(
+      supabase.from('subscriptions').select('*').eq('user_id', user.id).maybeSingle(),
+      { plan: 'free' },
+      'subscription'
+    ),
+    safeDashboardQuery<{ name: string } | null>(
+      supabase.from('businesses').select('name').eq('user_id', user.id).maybeSingle(),
+      null,
+      'business'
+    ),
   ])
 
   const plan = subscription?.plan || 'free'
@@ -32,11 +75,16 @@ export default async function DashboardPage() {
   // Count this month's invoices
   const thisMonth = new Date()
   thisMonth.setDate(1)
-  const { count: monthlyCount } = await supabase
-    .from('invoices')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .gte('created_at', thisMonth.toISOString())
+  const monthlyCount = await safeDashboardQuery<number>(
+    supabase
+      .from('invoices')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .gte('created_at', thisMonth.toISOString())
+      .then(({ count, error }) => ({ data: count ?? 0, error })),
+    0,
+    'monthly invoice count'
+  )
 
   const totalRevenue = invoices?.reduce((sum, inv) => sum + (inv.status === 'paid' ? inv.total : 0), 0) || 0
   const unpaidCount = invoices?.filter(inv => inv.status === 'sent' || inv.status === 'overdue').length || 0

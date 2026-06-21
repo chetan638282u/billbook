@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 
 /**
  * Supabase Auth Callback
@@ -32,10 +33,26 @@ export async function GET(request: NextRequest) {
         },
       }
     )
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      // The database trigger creates the free subscription row automatically.
+      const userId = data.session?.user.id
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+      if (userId && serviceRoleKey) {
+        try {
+          const serviceClient = createServiceClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            serviceRoleKey
+          )
+          await serviceClient
+            .from('subscriptions')
+            .upsert({ user_id: userId, plan: 'free' }, { onConflict: 'user_id', ignoreDuplicates: true })
+        } catch (err) {
+          console.error('OAuth account init failed:', err)
+        }
+      }
+
       return redirectResponse
     }
   }
