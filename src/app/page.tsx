@@ -145,7 +145,7 @@ export default async function LandingPage({
                 Create GST bill in 60 seconds
               </div>
               <h1 className="mx-auto max-w-5xl text-5xl font-extrabold leading-tight tracking-normal text-gray-950 md:text-6xl lg:text-7xl">
-                Billing software that makes small businesses look professional.
+                Create professional GST invoices, download PDFs, and share with customers in seconds.
               </h1>
               <p className="mx-auto mt-6 max-w-3xl text-xl leading-8 text-gray-600">
                 Create GST invoices, manage clients, track payments and share polished PDFs from one premium billing workspace.
