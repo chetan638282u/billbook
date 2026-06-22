@@ -1,5 +1,8 @@
+'use client'
+
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import {
   ArrowRight,
   BarChart3,
@@ -23,17 +26,19 @@ import {
 } from 'lucide-react'
 import ScrollReveal from '@/components/ui/ScrollReveal'
 
-export default async function LandingPage({
-  searchParams,
-}: {
-  searchParams?: Promise<{ code?: string; next?: string }>
-}) {
-  const params = await searchParams
-  if (params?.code) {
-    const callbackParams = new URLSearchParams({ code: params.code })
-    if (params.next?.startsWith('/')) callbackParams.set('next', params.next)
-    redirect(`/auth/callback?${callbackParams.toString()}`)
-  }
+export default function LandingPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    const code = searchParams.get('code')
+    if (!code) return
+
+    const callbackParams = new URLSearchParams({ code })
+    const next = searchParams.get('next')
+    if (next?.startsWith('/')) callbackParams.set('next', next)
+    router.replace(`/auth/callback?${callbackParams.toString()}`)
+  }, [router])
 
   const features = [
     { icon: ReceiptText, title: 'GST & non-GST invoicing', desc: 'Create sharp invoices with GSTIN, HSN/SAC, CGST, SGST and IGST details arranged professionally.', color: 'bg-blue-50 text-blue-700' },
