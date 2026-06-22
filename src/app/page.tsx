@@ -139,15 +139,15 @@ export default async function LandingPage({
       <section className="relative bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_100%)]">
         <div className="mx-auto max-w-7xl px-4 py-16 lg:py-24">
           <ScrollReveal direction="down">
-            <div className="mx-auto max-w-5xl text-center">
+            <div className="mx-auto max-w-7xl text-center">
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm">
                 <Zap className="h-4 w-4" />
                 Create GST bill in 60 seconds
               </div>
-              <h1 className="mx-auto max-w-5xl text-5xl font-extrabold leading-tight tracking-normal text-gray-950 md:text-6xl lg:text-7xl">
+              <h1 className="mx-auto max-w-7xl text-4xl font-extrabold leading-[1.08] tracking-normal text-gray-950 md:text-5xl lg:text-6xl">
                 Create professional GST invoices, download PDFs, and share with customers in seconds.
               </h1>
-              <p className="mx-auto mt-6 max-w-3xl text-xl leading-8 text-gray-600">
+              <p className="mx-auto mt-6 max-w-4xl text-xl leading-8 text-gray-600">
                 Create GST invoices, manage clients, track payments and share polished PDFs from one premium billing workspace.
               </p>
               <div className="mt-9 flex flex-col justify-center gap-4 sm:flex-row sm:items-center">
