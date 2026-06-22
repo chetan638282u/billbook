@@ -139,18 +139,18 @@ export default async function LandingPage({
       <section className="relative bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_100%)]">
         <div className="mx-auto max-w-7xl px-4 py-16 lg:py-24">
           <ScrollReveal direction="down">
-            <div>
+            <div className="mx-auto max-w-5xl text-center">
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm">
                 <Zap className="h-4 w-4" />
                 Create GST bill in 60 seconds
               </div>
-              <h1 className="max-w-3xl text-5xl font-extrabold leading-tight tracking-normal text-gray-950 md:text-6xl">
+              <h1 className="mx-auto max-w-5xl text-5xl font-extrabold leading-tight tracking-normal text-gray-950 md:text-6xl lg:text-7xl">
                 Billing software that makes small businesses look professional.
               </h1>
-              <p className="mt-6 max-w-2xl text-xl leading-8 text-gray-600">
+              <p className="mx-auto mt-6 max-w-3xl text-xl leading-8 text-gray-600">
                 Create GST invoices, manage clients, track payments and share polished PDFs from one premium billing workspace.
               </p>
-              <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div className="mt-9 flex flex-col justify-center gap-4 sm:flex-row sm:items-center">
                 <Link href="/auth/signup" className="btn-primary bb-pulse justify-center px-8 py-3.5 text-base">
                   Sign up for free
                   <ArrowRight className="h-5 w-5" />
@@ -160,7 +160,7 @@ export default async function LandingPage({
                   <MessageCircle className="h-5 w-5" />
                 </Link>
               </div>
-              <div className="mt-10 grid max-w-2xl gap-3 sm:grid-cols-3">
+              <div className="mx-auto mt-10 grid max-w-3xl gap-3 sm:grid-cols-3">
                 {[
                   ['60 sec', 'GST invoice'],
                   ['97%', 'clear tracking'],
