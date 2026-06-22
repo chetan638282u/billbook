@@ -29,8 +29,8 @@ export default async function LandingPage({
             </div>
             <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
               <Link href="#features" className="hover:text-blue-600 transition-colors">Features</Link>
-              <Link href="/knowledge" className="hover:text-blue-600 transition-colors">Knowledge</Link>
-              <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
+              <Link href="#features" className="hover:text-blue-600 transition-colors">Knowledge</Link>
+              <Link href="#pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -167,7 +167,7 @@ export default async function LandingPage({
       </section>
 
       {/* Pricing teaser */}
-      <section className="py-20">
+      <section id="pricing" className="py-20">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <ScrollReveal direction="down">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Simple, honest pricing in ₹</h2>
