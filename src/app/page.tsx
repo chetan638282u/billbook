@@ -271,25 +271,56 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="bb-float-slow absolute bottom-0 left-0 w-[250px] rounded-[2.1rem] border-[8px] border-gray-950 bg-gray-950 shadow-2xl shadow-gray-300">
-                <div className="rounded-[1.55rem] bg-white p-4">
-                  <div className="mx-auto mb-4 h-1.5 w-16 rounded-full bg-gray-900" />
-                  <div className="rounded-2xl bg-blue-600 p-4 text-white">
-                    <p className="text-xs text-blue-100">Invoice ready</p>
-                    <p className="mt-1 text-2xl font-extrabold">₹59,000</p>
+              <div className="bb-float-slow absolute bottom-0 left-0 w-[272px] rounded-[2.55rem] border-[10px] border-gray-950 bg-gray-950 shadow-2xl shadow-gray-300">
+                <div className="relative overflow-hidden rounded-[1.95rem] bg-gray-50">
+                  <div className="absolute left-1/2 top-2 z-10 h-6 w-24 -translate-x-1/2 rounded-full bg-gray-950" />
+                  <div className="bg-gradient-to-br from-blue-600 to-blue-500 px-5 pb-5 pt-11 text-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs font-semibold text-blue-100">BillBook.in</p>
+                        <p className="mt-1 text-lg font-extrabold">Invoice ready</p>
+                      </div>
+                      <span className="rounded-full bg-white/18 px-3 py-1 text-[11px] font-bold">Sent</span>
+                    </div>
+                    <p className="mt-6 text-4xl font-extrabold tracking-tight">₹59,000</p>
+                    <p className="mt-1 text-xs font-medium text-blue-100">INV-2026-0042 · Due in 7 days</p>
                   </div>
-                  <div className="mt-4 space-y-3">
-                    <div className="rounded-xl border border-gray-100 p-3">
-                      <p className="text-xs text-gray-400">Client</p>
-                      <p className="font-semibold text-gray-900">TechCorp</p>
+                  <div className="space-y-3 p-4">
+                    <div className="rounded-2xl bg-white p-4 shadow-sm">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-[11px] font-bold uppercase tracking-wide text-gray-400">Customer</p>
+                          <p className="mt-1 font-extrabold text-gray-950">TechCorp Pvt. Ltd.</p>
+                        </div>
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-sm font-extrabold text-blue-700">TC</div>
+                      </div>
                     </div>
-                    <div className="rounded-xl border border-gray-100 p-3">
-                      <p className="text-xs text-gray-400">Status</p>
-                      <p className="font-semibold text-emerald-600">Shared</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-2xl bg-white p-3 shadow-sm">
+                        <p className="text-[11px] font-bold uppercase tracking-wide text-gray-400">GST</p>
+                        <p className="mt-1 text-sm font-extrabold text-gray-950">₹9,000</p>
+                      </div>
+                      <div className="rounded-2xl bg-white p-3 shadow-sm">
+                        <p className="text-[11px] font-bold uppercase tracking-wide text-gray-400">PDF</p>
+                        <p className="mt-1 text-sm font-extrabold text-emerald-600">Ready</p>
+                      </div>
                     </div>
-                    <Link href="/auth/signup" className="flex items-center justify-center gap-2 rounded-xl bg-gray-950 px-4 py-3 text-sm font-bold text-white">
-                      Send invoice <ArrowRight className="h-4 w-4" />
-                    </Link>
+                    <div className="rounded-2xl bg-white p-4 shadow-sm">
+                      <div className="mb-2 flex items-center justify-between text-xs font-semibold text-gray-500">
+                        <span>Payment progress</span>
+                        <span>Shared</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-gray-100"><div className="h-2 w-4/5 rounded-full bg-emerald-500" /></div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Link href="/auth/signup" className="flex items-center justify-center rounded-2xl bg-emerald-500 px-3 py-3 text-xs font-extrabold text-white">
+                        WhatsApp
+                      </Link>
+                      <Link href="/auth/signup" className="flex items-center justify-center gap-1 rounded-2xl bg-gray-950 px-3 py-3 text-xs font-extrabold text-white">
+                        Send <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </div>
+                    <div className="mx-auto h-1 w-24 rounded-full bg-gray-300" />
                   </div>
                 </div>
               </div>
