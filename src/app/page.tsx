@@ -137,7 +137,7 @@ export default async function LandingPage({
       </nav>
 
       <section className="relative bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_100%)]">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 lg:grid-cols-[1fr_0.95fr] lg:py-24">
+        <div className="mx-auto max-w-7xl px-4 py-16 lg:py-24">
           <ScrollReveal direction="down">
             <div>
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm">
@@ -175,10 +175,47 @@ export default async function LandingPage({
             </div>
           </ScrollReveal>
 
+        </div>
+      </section>
+
+      <section className="border-y border-gray-100 bg-white py-8">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-10 gap-y-4 px-4 text-sm font-semibold text-gray-500">
+          <span className="flex items-center gap-2"><Shield className="h-4 w-4 text-emerald-500" /> Bank-grade encryption</span>
+          <span className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-500" /> GST-compliant format</span>
+          <span className="flex items-center gap-2"><Star className="h-4 w-4 fill-yellow-400 text-yellow-400" /> Trusted by 500+ businesses</span>
+          <span className="flex items-center gap-2"><Download className="h-4 w-4 text-blue-500" /> Instant PDF download</span>
+        </div>
+      </section>
+
+      <section className="bg-white py-20">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 lg:grid-cols-[0.82fr_1.18fr]">
+          <ScrollReveal>
+            <div>
+              <p className="text-sm font-bold uppercase tracking-wide text-blue-600">Live product preview</p>
+              <h2 className="mt-3 text-4xl font-extrabold text-gray-950">See your billing business at a glance.</h2>
+              <p className="mt-5 text-lg leading-8 text-gray-600">
+                Keep the homepage focused, then show buyers the real product feeling: dashboard, invoice status, payment tracking and mobile sharing in one clean view.
+              </p>
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                {[
+                  'Know paid and pending revenue',
+                  'Track every invoice status',
+                  'Download professional PDFs',
+                  'Share invoice links from mobile',
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
+                    <CheckCircle className="h-5 w-5 text-emerald-500" />
+                    <span className="text-sm font-semibold text-gray-700">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </ScrollReveal>
+
           <ScrollReveal delay={120}>
             <div className="relative min-h-[590px]">
               <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-blue-100 blur-3xl" />
-              <div className="bb-float bb-shine absolute right-0 top-8 w-full max-w-[550px] rounded-[1.75rem] border border-gray-200 bg-white p-4 shadow-2xl shadow-blue-200/60">
+              <div className="bb-float bb-shine absolute right-0 top-8 w-full max-w-[610px] rounded-[1.75rem] border border-gray-200 bg-white p-4 shadow-2xl shadow-blue-200/60">
                 <div className="rounded-[1.25rem] border border-gray-100 bg-gray-50">
                   <div className="flex items-center justify-between border-b border-gray-200 bg-white px-5 py-4">
                     <div>
@@ -258,15 +295,6 @@ export default async function LandingPage({
               </div>
             </div>
           </ScrollReveal>
-        </div>
-      </section>
-
-      <section className="border-y border-gray-100 bg-white py-8">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-10 gap-y-4 px-4 text-sm font-semibold text-gray-500">
-          <span className="flex items-center gap-2"><Shield className="h-4 w-4 text-emerald-500" /> Bank-grade encryption</span>
-          <span className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-emerald-500" /> GST-compliant format</span>
-          <span className="flex items-center gap-2"><Star className="h-4 w-4 fill-yellow-400 text-yellow-400" /> Trusted by 500+ businesses</span>
-          <span className="flex items-center gap-2"><Download className="h-4 w-4 text-blue-500" /> Instant PDF download</span>
         </div>
       </section>
 
