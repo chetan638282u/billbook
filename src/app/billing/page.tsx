@@ -148,7 +148,7 @@ export default function BillingPage() {
               currentPlan === 'starter' ? 'bg-blue-100 text-blue-700' :
               'bg-purple-100 text-purple-700'
             }`}>
-              {currentPlan === 'free' ? 'Free' : currentPlan === 'starter' ? '₹149/mo' : '₹349/mo'}
+              {currentPlan === 'free' ? 'Free' : currentPlan === 'starter' ? '₹199/mo' : '₹399/mo'}
             </div>
           </div>
         </div>

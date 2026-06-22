@@ -95,7 +95,7 @@ export const PLANS = [
   {
     id: 'starter' as Plan,
     name: 'Starter',
-    price: 149,
+    price: 199,
     features: [
       'Unlimited invoices',
       '10 clients',
@@ -107,7 +107,7 @@ export const PLANS = [
   {
     id: 'pro' as Plan,
     name: 'Pro',
-    price: 349,
+    price: 399,
     features: [
       'Everything in Starter',
       'Unlimited clients',

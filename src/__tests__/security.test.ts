@@ -96,11 +96,11 @@ console.log('\n── Razorpay Signature Verification ──')
 
 console.log('\n── Plan Price Validation ──')
 {
-  const PLAN_PRICES: Record<string, number> = { starter: 14900, pro: 34900 }
+  const PLAN_PRICES: Record<string, number> = { starter: 19900, pro: 39900 }
 
   test('Valid plan returns correct price', () => {
-    assert(PLAN_PRICES['starter'] === 14900, 'Starter should be 14900 paise')
-    assert(PLAN_PRICES['pro'] === 34900, 'Pro should be 34900 paise')
+    assert(PLAN_PRICES['starter'] === 19900, 'Starter should be 19900 paise')
+    assert(PLAN_PRICES['pro'] === 39900, 'Pro should be 39900 paise')
   })
 
   test('Unknown plan is rejected', () => {
@@ -116,7 +116,7 @@ console.log('\n── Plan Price Validation ──')
     const clientAmount = 1 // attacker sends 1 paisa
     const plan = 'starter'
     const serverAmount = PLAN_PRICES[plan] // server derives from map
-    assert(serverAmount === 14900, 'Server amount should ignore client value')
+    assert(serverAmount === 19900, 'Server amount should ignore client value')
     assert(serverAmount !== clientAmount, 'Server rejects tampered client amount')
   })
 }

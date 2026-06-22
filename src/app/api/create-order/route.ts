@@ -4,8 +4,8 @@ import { rateLimit, getClientIP } from '@/lib/ratelimit'
 import { requireServerEnv } from '@/lib/env'
 
 const PLAN_PRICES = Object.assign(Object.create(null) as Record<string, number>, {
-  starter: 14900,
-  pro: 34900,
+  starter: 19900,
+  pro: 39900,
 })
 
 export async function POST(req: NextRequest) {

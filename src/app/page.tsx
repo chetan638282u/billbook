@@ -176,8 +176,8 @@ export default async function LandingPage({
           <div className="grid md:grid-cols-3 gap-4">
             {[
               { name: 'Free', price: '₹0', desc: '5 invoices/month', cta: 'Get started', href: '/auth/signup', highlight: false },
-              { name: 'Starter', price: '₹149/mo', desc: 'Unlimited invoices', cta: 'Start Starter', href: '/pricing', highlight: true },
-              { name: 'Pro', price: '₹349/mo', desc: 'Unlimited everything', cta: 'Go Pro', href: '/pricing', highlight: false },
+              { name: 'Starter', price: '₹199/mo', desc: 'Unlimited invoices', cta: 'Start Starter', href: '/pricing', highlight: true },
+              { name: 'Pro', price: '₹399/mo', desc: 'Unlimited everything', cta: 'Go Pro', href: '/pricing', highlight: false },
             ].map((p, index) => (
               <ScrollReveal key={p.name} delay={index * 90}>
                 <div className={`card p-6 h-full ${p.highlight ? 'ring-2 ring-blue-500' : ''}`}>
