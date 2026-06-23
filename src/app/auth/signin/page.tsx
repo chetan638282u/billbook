@@ -119,7 +119,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 lg:grid lg:grid-cols-[minmax(0,0.88fr)_minmax(520px,1.12fr)]">
+    <div className="min-h-screen bg-[linear-gradient(135deg,#f8fbff_0%,#eef6ff_48%,#f8fbff_100%)] lg:grid lg:grid-cols-[minmax(0,0.88fr)_minmax(520px,1.12fr)]">
       <div className="flex min-h-screen flex-col justify-center px-4 py-12">
       <div className="max-w-md w-full mx-auto">
         <div className="text-center mb-8">
@@ -133,7 +133,7 @@ export default function SignInPage() {
           <p className="mt-2 text-sm text-gray-500">Sign in to your BillBook account</p>
         </div>
 
-        <div className="card p-8">
+        <div className="rounded-2xl border border-white/75 bg-white/90 p-8 shadow-xl shadow-blue-950/5 backdrop-blur">
           {info && (
             <div className="bg-blue-50 border border-blue-200 text-blue-700 text-sm rounded-lg px-4 py-3 mb-4">{info}</div>
           )}

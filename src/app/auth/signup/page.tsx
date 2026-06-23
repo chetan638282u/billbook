@@ -100,7 +100,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 lg:grid lg:grid-cols-[minmax(0,0.88fr)_minmax(520px,1.12fr)]">
+    <div className="min-h-screen bg-[linear-gradient(135deg,#f8fbff_0%,#eef6ff_48%,#f8fbff_100%)] lg:grid lg:grid-cols-[minmax(0,0.88fr)_minmax(520px,1.12fr)]">
       <div className="flex min-h-screen flex-col justify-center px-4 py-8">
       <div className="max-w-md w-full mx-auto">
         <div className="text-center mb-8">
@@ -114,7 +114,7 @@ export default function SignUpPage() {
           <p className="mt-2 text-sm text-gray-500">Start generating GST invoices for free</p>
         </div>
 
-        <div className="card p-8">
+        <div className="rounded-2xl border border-white/75 bg-white/90 p-8 shadow-xl shadow-blue-950/5 backdrop-blur">
           {success && (
             <div className="bg-green-50 border border-green-200 text-green-800 text-sm rounded-lg px-4 py-3 mb-4">
               {success}
