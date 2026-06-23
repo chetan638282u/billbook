@@ -4,6 +4,7 @@ import {
   BarChart3,
   Briefcase,
   Calculator,
+  ChevronDown,
   CheckCircle,
   CreditCard,
   Download,
@@ -102,20 +103,52 @@ export default function LandingPage() {
       </div>
 
       <nav className="sticky top-0 z-50 border-b border-gray-100 bg-white/92 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 shadow-lg shadow-blue-200">
-              <FileText className="h-5 w-5 text-white" />
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-4 py-4">
+          <div className="flex min-w-0 items-center gap-8">
+            <Link href="/" className="flex shrink-0 items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 shadow-lg shadow-blue-200">
+                <FileText className="h-5 w-5 text-white" />
+              </div>
+              <span className="text-xl font-bold text-gray-900">BillBook<span className="text-blue-600">.in</span></span>
+            </Link>
+            <div className="hidden items-center gap-5 text-sm font-medium text-gray-600 xl:flex">
+              <div className="group relative">
+                <Link href="#features" className="flex items-center gap-1.5 transition-colors hover:text-blue-600">
+                  Features
+                  <ChevronDown className="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />
+                </Link>
+                <div className="pointer-events-none invisible absolute left-0 top-full z-50 mt-4 w-[390px] translate-y-3 rounded-2xl border border-gray-100 bg-white/95 p-3 opacity-0 shadow-2xl shadow-blue-950/10 backdrop-blur-xl transition-all duration-300 group-hover:visible group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
+                  <div className="absolute -top-2 left-8 h-4 w-4 rotate-45 border-l border-t border-gray-100 bg-white" />
+                  <div className="grid gap-2">
+                    {[
+                      { href: '#features', icon: ReceiptText, title: 'GST invoice builder', desc: 'Create professional GST and non-GST invoices.' },
+                      { href: '#gst', icon: Calculator, title: 'Tax-ready totals', desc: 'Handle CGST, SGST, IGST and HSN/SAC clearly.' },
+                      { href: '#templates', icon: Download, title: 'PDF templates', desc: 'Download clean invoices and share them fast.' },
+                      { href: '#pricing', icon: BarChart3, title: 'Business tracking', desc: 'Track paid, sent and overdue invoice amounts.' },
+                    ].map((item) => (
+                      <Link
+                        key={item.title}
+                        href={item.href}
+                        className="group/item flex items-start gap-3 rounded-xl p-3 transition-all duration-200 hover:bg-blue-50 hover:shadow-sm"
+                      >
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-100 transition-transform duration-200 group-hover/item:scale-105">
+                          <item.icon className="h-5 w-5" />
+                        </span>
+                        <span>
+                          <span className="block font-semibold text-gray-900 transition-colors group-hover/item:text-blue-700">{item.title}</span>
+                          <span className="mt-0.5 block text-xs leading-5 text-gray-500">{item.desc}</span>
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <Link href="#templates" className="transition-colors hover:text-blue-600">Templates</Link>
+              <Link href="#industries" className="transition-colors hover:text-blue-600">Industries</Link>
+              <Link href="#gst" className="transition-colors hover:text-blue-600">GST Tools</Link>
+              <Link href="#pricing" className="transition-colors hover:text-blue-600">Pricing</Link>
+              <Link href="#contact" className="transition-colors hover:text-blue-600">Get in touch</Link>
             </div>
-            <span className="text-xl font-bold text-gray-900">BillBook<span className="text-blue-600">.in</span></span>
-          </Link>
-          <div className="hidden items-center gap-6 text-sm font-medium text-gray-600 lg:flex">
-            <Link href="#features" className="transition-colors hover:text-blue-600">Features</Link>
-            <Link href="#templates" className="transition-colors hover:text-blue-600">Templates</Link>
-            <Link href="#industries" className="transition-colors hover:text-blue-600">Industries</Link>
-            <Link href="#gst" className="transition-colors hover:text-blue-600">GST Tools</Link>
-            <Link href="#pricing" className="transition-colors hover:text-blue-600">Pricing</Link>
-            <Link href="#contact" className="transition-colors hover:text-blue-600">Get in touch</Link>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/auth/signin" className="text-sm font-medium text-gray-600 hover:text-gray-900">Login</Link>
