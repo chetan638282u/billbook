@@ -16,6 +16,8 @@ export default function SignInPage() {
     ? 'Check your email and click the confirmation link to activate your account.'
     : searchParams.get('message') === 'account_created'
       ? 'Account created. Sign in with the same email and password.'
+      : searchParams.get('message') === 'password_updated'
+        ? 'Password updated. Sign in with your new password.'
     : ''
   const initialEmail = searchParams.get('email') ?? ''
   const [form, setForm] = useState({ email: initialEmail, password: '' })
@@ -141,7 +143,12 @@ export default function SignInPage() {
                 required maxLength={254} autoComplete="email" />
             </div>
             <div>
-              <label className="label">Password</label>
+              <div className="flex items-center justify-between">
+                <label className="label">Password</label>
+                <Link href="/auth/forgot-password" className="text-sm font-medium text-blue-600 hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
               <div className="relative">
                 <input type={showPassword ? 'text' : 'password'} className="input pr-10"
                   placeholder="Your password"
