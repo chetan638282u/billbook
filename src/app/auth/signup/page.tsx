@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { FileText, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { FileText, Eye, EyeOff, Loader2 } from '@/components/ui/icons'
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton'
 
 export default function SignUpPage() {
   const router = useRouter()
-  const [form, setForm] = useState({ name: '', email: '', password: '' })
+  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -37,6 +37,7 @@ export default function SignUpPage() {
     const name = form.name.trim().slice(0, 100)
     if (!name) { setError('Please enter your name.'); setLoading(false); return }
     if (form.password.length < 8) { setError('Password must be at least 8 characters.'); setLoading(false); return }
+    if (form.password !== form.confirmPassword) { setError('Password and confirm password must match.'); setLoading(false); return }
 
     try {
       const { createClient } = await import('@/lib/supabase/client')
@@ -58,7 +59,7 @@ export default function SignUpPage() {
       }
 
       if (data.user && !data.session) {
-        setSuccess('Account created! Check your email for a confirmation link, then sign in.')
+        setSuccess('Account created. You can sign in now.')
         setLoading(false)
         return
       }
@@ -147,6 +148,20 @@ export default function SignUpPage() {
                 <input type={showPassword ? 'text' : 'password'} className="input pr-10"
                   placeholder="Minimum 8 characters"
                   value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
+                  required minLength={8} maxLength={128} autoComplete="new-password" />
+                <button type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="label">Confirm password</label>
+              <div className="relative">
+                <input type={showPassword ? 'text' : 'password'} className="input pr-10"
+                  placeholder="Re-enter your password"
+                  value={form.confirmPassword} onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
                   required minLength={8} maxLength={128} autoComplete="new-password" />
                 <button type="button"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
