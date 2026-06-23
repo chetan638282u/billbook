@@ -104,14 +104,14 @@ export default function LandingPage() {
 
       <nav className="sticky top-0 z-50 border-b border-gray-100 bg-white/92 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-4 py-4">
-          <div className="flex min-w-0 items-center gap-8">
+          <div className="flex min-w-0 items-center gap-5">
             <Link href="/" className="flex shrink-0 items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 shadow-lg shadow-blue-200">
                 <FileText className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold text-gray-900">BillBook<span className="text-blue-600">.in</span></span>
             </Link>
-            <div className="hidden items-center gap-5 text-sm font-medium text-gray-600 xl:flex">
+            <div className="hidden items-center gap-4 text-[13px] font-medium text-gray-600 lg:flex xl:gap-5 xl:text-sm">
               <div className="group relative">
                 <Link href="#features" className="flex items-center gap-1.5 transition-colors hover:text-blue-600">
                   Features
