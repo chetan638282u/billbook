@@ -18,33 +18,15 @@ export default function ForgotPasswordPage() {
 
     try {
       const normalizedEmail = email.trim().toLowerCase()
-      const checkResponse = await fetch('/api/auth/check-email', {
+      const response = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: normalizedEmail }),
       })
-      const checkResult = await checkResponse.json()
+      const result = await response.json()
 
-      if (!checkResponse.ok) {
-        setError(checkResult.error || 'Account check failed. Please try again.')
-        setLoading(false)
-        return
-      }
-
-      if (!checkResult.exists) {
-        setError('No account found with this email. Please create an account first.')
-        setLoading(false)
-        return
-      }
-
-      const { createClient } = await import('@/lib/supabase/client')
-      const supabase = createClient()
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/auth/reset-password`,
-      })
-
-      if (resetError) {
-        setError(resetError.message || 'Password reset email could not be sent.')
+      if (!response.ok) {
+        setError(result.error || 'Password reset email could not be sent.')
         setLoading(false)
         return
       }
