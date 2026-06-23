@@ -40,37 +40,26 @@ export default function SignUpPage() {
     if (form.password !== form.confirmPassword) { setError('Password and confirm password must match.'); setLoading(false); return }
 
     try {
-      const { createClient } = await import('@/lib/supabase/client')
-      const supabase = createClient()
-
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: form.email.trim().toLowerCase(),
-        password: form.password,
-        options: {
-          data: { full_name: name },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email: form.email,
+          password: form.password,
+        }),
       })
 
-      if (signUpError) {
-        setError(signUpError.message)
+      const result = await response.json()
+
+      if (!response.ok) {
+        setError(result.error || 'Account could not be created. Please try again.')
         setLoading(false)
         return
       }
 
-      if (data.user && !data.session) {
-        setSuccess('Account created. You can sign in now.')
-        setLoading(false)
-        return
-      }
-
-      if (data.user && data.session) {
-        try {
-          await fetch('/api/init-account', { method: 'POST' })
-        } catch {}
-        router.push('/dashboard')
-        router.refresh()
-      }
+      setSuccess('Account created. Sign in with the same email and password.')
+      router.push(`/auth/signin?message=account_created&email=${encodeURIComponent(form.email.trim().toLowerCase())}`)
     } catch {
       setError('Account creation could not be completed. Please check your connection and try again.')
       setLoading(false)

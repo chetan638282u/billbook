@@ -14,8 +14,11 @@ export default function SignInPage() {
     : ''
   const initialInfo = searchParams.get('message') === 'check_email'
     ? 'Check your email and click the confirmation link to activate your account.'
+    : searchParams.get('message') === 'account_created'
+      ? 'Account created. Sign in with the same email and password.'
     : ''
-  const [form, setForm] = useState({ email: '', password: '' })
+  const initialEmail = searchParams.get('email') ?? ''
+  const [form, setForm] = useState({ email: initialEmail, password: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(initialError)
@@ -40,16 +43,36 @@ export default function SignInPage() {
     setLoading(true)
     setError('')
     try {
+      const email = form.email.trim().toLowerCase()
+      const checkResponse = await fetch('/api/auth/check-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const checkResult = await checkResponse.json()
+
+      if (!checkResponse.ok) {
+        setError(checkResult.error || 'Account check failed. Please try again.')
+        setLoading(false)
+        return
+      }
+
+      if (!checkResult.exists) {
+        setError('No account found with this email. Please create an account first.')
+        setLoading(false)
+        return
+      }
+
       const { createClient } = await import('@/lib/supabase/client')
       const supabase = createClient()
 
       const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: form.email.trim().toLowerCase(),
+        email,
         password: form.password,
       })
 
       if (signInError) {
-        setError('Invalid email or password. Please try again.')
+        setError('Incorrect password. Please enter the password you used while creating this account.')
         setLoading(false)
         return
       }
