@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FileText, Eye, EyeOff, Loader2 } from 'lucide-react'
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton'
+import AuthVisualPanel from '@/components/auth/AuthVisualPanel'
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -99,7 +100,8 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4">
+    <div className="min-h-screen bg-gray-50 lg:grid lg:grid-cols-[minmax(0,0.92fr)_minmax(520px,1.08fr)]">
+      <div className="flex min-h-screen flex-col justify-center px-4 py-8">
       <div className="max-w-md w-full mx-auto">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 justify-center">
@@ -200,6 +202,8 @@ export default function SignUpPage() {
           By signing up, you agree to our Terms of Service and Privacy Policy.
         </p>
       </div>
+      </div>
+      <AuthVisualPanel />
     </div>
   )
 }
