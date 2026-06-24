@@ -26,11 +26,12 @@ export async function POST(request: NextRequest) {
 
     const supabase = createClient(
       requireServerEnv('NEXT_PUBLIC_SUPABASE_URL'),
-      requireServerEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY')
+      requireServerEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
+      { auth: { flowType: 'implicit' } }
     )
 
     const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-      redirectTo: `${PRODUCTION_APP_URL}/auth/callback?next=/auth/reset-password`,
+      redirectTo: `${PRODUCTION_APP_URL}/auth/reset-password`,
     })
 
     if (error) {

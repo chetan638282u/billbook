@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, FileText, Loader2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 export default function ResetPasswordPage() {
   const router = useRouter()
@@ -11,6 +12,31 @@ export default function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [recoveryReady, setRecoveryReady] = useState(false)
+
+  useEffect(() => {
+    async function verifyRecoveryLink() {
+      const params = new URLSearchParams(window.location.hash.slice(1))
+
+      if (params.get('type') !== 'recovery') {
+        await Promise.resolve()
+        setError('This password reset link is invalid or expired. Please request a new reset email.')
+        return
+      }
+
+      const supabase = createClient()
+      const { data, error: sessionError } = await supabase.auth.getSession()
+
+      if (sessionError || !data.session) {
+        setError('This password reset link is invalid or expired. Please request a new reset email.')
+        return
+      }
+
+      setRecoveryReady(true)
+    }
+
+    void verifyRecoveryLink()
+  }, [])
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -30,7 +56,6 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      const { createClient } = await import('@/lib/supabase/client')
       const supabase = createClient()
       const { error: updateError } = await supabase.auth.updateUser({ password: form.password })
 
@@ -117,9 +142,9 @@ export default function ResetPasswordPage() {
               <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">{error}</div>
             )}
 
-            <button type="submit" disabled={loading} className="btn-primary w-full justify-center py-3">
+            <button type="submit" disabled={loading || !recoveryReady} className="btn-primary w-full justify-center py-3">
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {loading ? 'Updating password...' : 'Update password'}
+              {loading ? 'Updating password...' : recoveryReady ? 'Update password' : 'Verifying reset link...'}
             </button>
           </form>
         </div>
