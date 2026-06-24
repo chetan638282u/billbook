@@ -1,25 +1,44 @@
-export const dynamic = 'force-dynamic'
+'use client'
 
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import AppShell from '@/components/AppShell'
 import Link from 'next/link'
-import { Plus, Users, Mail, Phone } from 'lucide-react'
+import { Plus, Users, Mail, Phone } from '@/components/ui/icons'
 import { PLAN_LIMITS } from '@/types'
+import type { Client, Plan } from '@/types'
 
-export default async function ClientsPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/signin')
+export default function ClientsPage() {
+  const router = useRouter()
+  const [clients, setClients] = useState<Client[]>([])
+  const [plan, setPlan] = useState<Plan>('free')
+  const [loaded, setLoaded] = useState(false)
 
-  const [{ data: clients }, { data: subscription }] = await Promise.all([
-    supabase.from('clients').select('*').eq('user_id', user.id).order('name'),
-    supabase.from('subscriptions').select('plan').eq('user_id', user.id).single(),
-  ])
+  useEffect(() => {
+    async function loadClients() {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        router.replace('/auth/signin')
+        return
+      }
 
-  const plan = subscription?.plan || 'free'
-  const limit = PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS]
-  const atLimit = (clients?.length || 0) >= limit.clients
+      const [clientsResult, subscriptionResult] = await Promise.all([
+        supabase.from('clients').select('*').eq('user_id', user.id).order('name'),
+        supabase.from('subscriptions').select('plan').eq('user_id', user.id).single(),
+      ])
+
+      setClients((clientsResult.data || []) as Client[])
+      setPlan((subscriptionResult.data?.plan || 'free') as Plan)
+      setLoaded(true)
+    }
+
+    void loadClients()
+  }, [router])
+
+  const limit = PLAN_LIMITS[plan]
+  const atLimit = clients.length >= limit.clients
 
   return (
     <AppShell>
@@ -28,7 +47,7 @@ export default async function ClientsPage() {
           <div>
             <h1 className="page-title">Clients</h1>
             <p className="text-sm text-gray-500 mt-1">
-              {clients?.length || 0} {limit.clients === Infinity ? '' : `/ ${limit.clients}`} clients
+              {loaded ? `${clients.length} ${limit.clients === Infinity ? '' : `/ ${limit.clients}`} clients` : ' '}
             </p>
           </div>
           {atLimit ? (
@@ -40,7 +59,7 @@ export default async function ClientsPage() {
           )}
         </div>
 
-        {atLimit && (
+        {loaded && atLimit && (
           <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 mb-5 text-sm text-amber-800">
             You&apos;ve reached the client limit for your plan.{' '}
             <Link href="/billing" className="underline font-medium">Upgrade for more</Link>
@@ -48,7 +67,13 @@ export default async function ClientsPage() {
         )}
 
         <div className="card overflow-hidden">
-          {!clients || clients.length === 0 ? (
+          {!loaded ? (
+            <div className="p-6 space-y-4" aria-hidden="true">
+              <div className="h-12 rounded bg-gray-100" />
+              <div className="h-12 rounded bg-gray-100" />
+              <div className="h-12 rounded bg-gray-100" />
+            </div>
+          ) : clients.length === 0 ? (
             <div className="py-16 text-center">
               <Users className="w-12 h-12 text-gray-200 mx-auto mb-4" />
               <p className="text-gray-500 font-medium mb-1">No clients yet</p>
