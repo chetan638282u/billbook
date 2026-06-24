@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, FileText, Loader2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
+import { createRecoveryClient } from '@/lib/supabase/client'
 
 export default function ResetPasswordPage() {
   const router = useRouter()
@@ -16,15 +16,18 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     async function verifyRecoveryLink() {
+      const hashParams = new URLSearchParams(window.location.hash.slice(1))
       const searchParams = new URLSearchParams(window.location.search)
+      const hasRecoveryHash = hashParams.get('type') === 'recovery'
+      const hasRecoveryCode = Boolean(searchParams.get('code'))
 
-      if (searchParams.get('recovery') !== '1') {
+      if (!hasRecoveryHash && !hasRecoveryCode) {
         await Promise.resolve()
         setError('This password reset link is invalid or expired. Please request a new reset email.')
         return
       }
 
-      const supabase = createClient()
+      const supabase = createRecoveryClient()
       const { data, error: sessionError } = await supabase.auth.getSession()
 
       if (sessionError || !data.session) {
@@ -56,7 +59,7 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      const supabase = createClient()
+      const supabase = createRecoveryClient()
       const { error: updateError } = await supabase.auth.updateUser({ password: form.password })
 
       if (updateError) {
