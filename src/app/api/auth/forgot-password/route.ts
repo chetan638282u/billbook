@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { getAppUrl, requireServerEnv } from '@/lib/env'
+import { PRODUCTION_APP_URL, requireServerEnv } from '@/lib/env'
 import { findAuthUserByEmail } from '@/lib/supabase/admin'
 import { getClientIP, rateLimit } from '@/lib/ratelimit'
 
@@ -29,9 +29,8 @@ export async function POST(request: NextRequest) {
       requireServerEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY')
     )
 
-    const appUrl = getAppUrl().replace(/\/$/, '')
     const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-      redirectTo: `${appUrl}/auth/callback?next=/auth/reset-password`,
+      redirectTo: `${PRODUCTION_APP_URL}/auth/callback?next=/auth/reset-password`,
     })
 
     if (error) {
