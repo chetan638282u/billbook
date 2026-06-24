@@ -16,9 +16,14 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     async function verifyRecoveryLink() {
-      const params = new URLSearchParams(window.location.hash.slice(1))
+      const hashParams = new URLSearchParams(window.location.hash.slice(1))
+      const searchParams = new URLSearchParams(window.location.search)
+      const hasRecoveryHash = hashParams.get('type') === 'recovery'
+      const hasRecoveryCode = Boolean(searchParams.get('code'))
 
-      if (params.get('type') !== 'recovery') {
+      // Supabase can send a recovery link with either a secure URL fragment
+      // or a one-time `code` query parameter, depending on the auth flow.
+      if (!hasRecoveryHash && !hasRecoveryCode) {
         await Promise.resolve()
         setError('This password reset link is invalid or expired. Please request a new reset email.')
         return
